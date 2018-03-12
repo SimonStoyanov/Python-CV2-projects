@@ -50,7 +50,7 @@ def getFilteredValue(img, kernel, i, j):
                 #print "Value! "+str(value)
     return value
 
-def strechValue(value, minV, maxV, strechValue = 255):
+def strechValue(value, minV, maxV, strechValue = 1.0):
     return ((value - minV)/(maxV - minV))*(strechValue)
 
 def toAbs(matrix):
@@ -100,6 +100,7 @@ img3 = ApplyKernel(img, kernel2)
 cv2.imshow('Normal', img)
 cv2.imshow('Kernel 1', img2)
 cv2.imshow('Kernel 2', img3)
+cv2.imshow('Kernel 3', ApplyKernel(img, kernel44))
 
 #filename = input("Introduce Image path: ")
 
