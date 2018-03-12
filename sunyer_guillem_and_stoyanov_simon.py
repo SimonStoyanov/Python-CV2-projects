@@ -36,18 +36,10 @@ def getFilteredValue(img, kernel, i, j):
     kx,ky = kernel.shape
     #print "Filtered"
     for ix in range (-(kx/2),kx/2 +1):
-        for iy in range (-(ky/2),ky/2 +1):
-            #print "Loop"
-            #print "i+ix "+str(i+ix)
-            #print "ix "+str(ix)
-            #print "imgx "+str(imgx)
-            #print "j+iy "+str(j+iy)
-            #print "iy "+str(iy)
-            #print "imgy "+str(imgy)
-            
+        for iy in range (-(ky/2),ky/2 +1):      
             if(i+ix>=0 and i+ix < imgx and j+iy >=0 and j+ iy < imgy):
                 value = value + img[i+ix][j+iy]*kernel[ix+kx/2][iy+ky/2]
-                #print "Value! "+str(value)
+
     return value
 
 def strechValue(value, minV, maxV, strechValue = 1.0):
@@ -68,41 +60,39 @@ def ApplyKernel(img_to_apply, kernel):
         for j in range(0,rows):
             new_img[i][j] = getFilteredValue(img_to_apply,kernel,i,j)
 
-    #print "Without Abs"
-    #print new_img
-
     toAbs(new_img)
 
     min_val = GetMinElementMatrix(new_img)
     max_val = GetMaxElementMatrix(new_img)
     
-    #print "Abs"
-    #print new_img
-    
     for i in range(0,cols):
         for j in range(0,rows):
             new_img[i][j] = strechValue(new_img[i][j], min_val, max_val)
 
-    #print "Normalized"
-    #print new_img
-
     return new_img
 
-img = cv2.imread('ricalin.png',0)
 
-kernel1 = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
-kernel2 = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
-kernel44 = np.array([[1, 4, 6, 4, 1], [4, 16, 24, 16, 4], [6, 24, 36, 24, 6],
-                     [4, 16, 24, 16, 4], [1, 4, 6, 4, 1]])
-img2 = ApplyKernel(img, kernel1)
-img3 = ApplyKernel(img, kernel2)
+
+sobel_x = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]])
+sobel_y = np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]])
+
+while (True):
+    filename = input("Introduce Image path: ")
+    img = cv2.imread(filename, 0)
+    if (img is not None):
+        break
+    print "--- No such file exists. Try with another path ---"
+
+img2 = ApplyKernel(img, sobel_x)
+img3 = ApplyKernel(img, sobel_y)
+gradient = np.sqrt(np.power(img2, 2) + np.power(img3, 2))
 
 cv2.imshow('Normal', img)
-cv2.imshow('Kernel 1', img2)
-cv2.imshow('Kernel 2', img3)
-cv2.imshow('Kernel 3', ApplyKernel(img, kernel44))
+cv2.imshow('Sobel X', img2)
+cv2.imshow('Sobel Y', img3)
+cv2.imshow('Gradient', gradient)
 
-#filename = input("Introduce Image path: ")
+print "Press Esc to close windows"
 
 k = cv2.waitKey(0)
 
